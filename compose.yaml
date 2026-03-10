@@ -1,0 +1,27 @@
+services:
+  qwen:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    command: >
+      -hf unsloth/Qwen3.5-9B-GGUF:UD-Q4_K_XL
+      --ctx-size 16384
+      --temp 1.0
+      --top-p 0.95
+      --top-k 20
+      --min-p 0.00
+      --alias "unsloth/Qwen3.5-9B-GGUF"
+      --host 0.0.0.0
+      --port 8080
+    runtime: nvidia
+    environment:
+      LLAMA_ARG_MODELS_DIR: /models
+    ports:
+      - 8080:8080
+    volumes:
+      - ./models:/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
