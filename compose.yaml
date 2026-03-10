@@ -1,19 +1,14 @@
 services:
   qwen:
     image: ghcr.io/ggml-org/llama.cpp:server-cuda
-    command: >
-      -hf unsloth/Qwen3.5-9B-GGUF:UD-Q4_K_XL
-      --ctx-size 16384
-      --temp 1.0
-      --top-p 0.95
-      --top-k 20
-      --min-p 0.00
-      --alias "unsloth/Qwen3.5-9B-GGUF"
-      --host 0.0.0.0
-      --port 8080
+    command: "--temp 1.0 --top-p 0.95 --top-k 20 --min-p 0.00"
     runtime: nvidia
     environment:
-      LLAMA_ARG_MODELS_DIR: /models
+      LLAMA_ARG_MODEL: /models/unsloth/Qwen3.5-4B-UD-Q4_K_XL.gguf
+      LLAMA_ARG_ALIAS: unsloth/Qwen3.5-4B-GGUF
+      LLAMA_ARG_CTX_SIZE: 32768
+      LLAMA_ARG_HOST: 0.0.0.0
+      LLAMA_ARG_PORT: 8080
     ports:
       - 8080:8080
     volumes:
