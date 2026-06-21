@@ -1,4 +1,19 @@
 services:
+  agent:
+    build: ./agent
+    ports:
+      - "8000:8000"
+    environment:
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET}
+      GITHUB_REPO: ${GITHUB_REPO}
+      LLM_BASE_URL: http://qwen:8080
+      LLM_MODEL: unsloth/Qwen3.5-2B-GGUF
+      AGENT_MAX_ITERATIONS: "20"
+      AGENT_MAX_CONCURRENCY: "20"
+    depends_on:
+      - qwen
+
   qwen:
     image: ghcr.io/ggml-org/llama.cpp:server-cuda
     command: "--temp 1.0 --top-p 0.95 --top-k 20 --min-p 0.00"
