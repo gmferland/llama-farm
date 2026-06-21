@@ -52,6 +52,21 @@ A GitHub App provides per-installation tokens, scoped permissions, and webhook d
 
 To avoid running on every comment, the dispatcher only activates when an issue comment or PR review comment begins with `/agent`. This is a well-understood pattern (slash commands) and avoids accidental triggers. A label-based trigger (`agent-task`) is also supported for issues.
 
+### 7. Model hosting: self-hosted local model over cloud APIs
+
+The agent runs exclusively against the local llama.cpp endpoint. Cloud model APIs (Claude, OpenAI, etc.) were considered and rejected.
+
+The primary driver is **exploration**: this project exists to discover what is achievable entirely self-hosted. Using a cloud API would answer a different question. The capability ceiling of Qwen3.5-2B — where it succeeds, where it fails, and at what task complexity it breaks down — is itself the signal the project is designed to produce. That data informs when it's worth running a larger local model.
+
+Cost and privacy reinforce the decision: code from private repositories never leaves the host machine, and there is no per-invocation API cost.
+
+Alternatives considered:
+- **Claude API with custom tools**: Highly capable but violates all three constraints — code leaves the host, costs per token, and answers nothing about local model viability.
+- **Claude Code SDK**: Eliminates most task executor build work, but is designed for interactive terminal use and has the same cloud constraints.
+- **Open-source agents (OpenHands, Aider)**: Both support local models via OpenAI-compatible APIs and have mature tool implementations. Kept in mind as escape hatches if the custom task executor build stalls — either could be invoked as a subprocess pointed at `http://qwen:8080/v1`.
+
+Model upgrades are a compose.yaml change only (`LLAMA_ARG_MODEL`). No code changes required when moving to a larger model.
+
 ## Risks / Trade-offs
 
 - **Model capability**: Qwen3.5-2B is small. Complex multi-file refactors may produce poor tool calls or hallucinate file paths. Mitigation: limit max tool call iterations (default 20), validate paths before write, always show diffs in PR description.
