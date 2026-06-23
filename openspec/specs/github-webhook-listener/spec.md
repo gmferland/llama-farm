@@ -29,15 +29,19 @@ The service SHALL validate the `X-Hub-Signature-256` header on every incoming we
 - **THEN** the service SHALL respond with HTTP 401 and log a warning with the event delivery ID
 
 ### Requirement: Event type routing
-The service SHALL inspect the `X-GitHub-Event` header and route recognized event types to the dispatcher. Unrecognized event types SHALL be acknowledged (HTTP 202) but not dispatched.
+The service SHALL inspect the `X-GitHub-Event` header and route recognized event types to the dispatcher. Unrecognized event types SHALL be acknowledged (HTTP 202) but not dispatched. For recognized events, the service SHALL extract the `installation.id` field from the payload and include it in the event context passed to the dispatcher. If `installation.id` is absent, the event SHALL be treated as unrecognized and not dispatched.
 
 #### Scenario: Recognized event type dispatched
-- **WHEN** the event type is `issue_comment`, `pull_request_review_comment`, or `issues` with action `labeled`
-- **THEN** the payload SHALL be forwarded to the dispatcher
+- **WHEN** the event type is `issue_comment`, `pull_request_review_comment`, or `issues` with action `labeled`, and the payload contains `installation.id`
+- **THEN** the payload SHALL be forwarded to the dispatcher with the installation ID included in the event context
 
 #### Scenario: Unrecognized event type ignored
 - **WHEN** the event type is any other value (e.g., `push`, `star`)
 - **THEN** the service SHALL respond with HTTP 202 and take no further action
+
+#### Scenario: Missing installation ID
+- **WHEN** a recognized event type arrives but the payload does not contain `installation.id`
+- **THEN** the service SHALL respond with HTTP 202 and not dispatch the event
 
 ### Requirement: Immediate response with background processing
 The service SHALL return an HTTP response to GitHub within 5 seconds. Agent processing SHALL occur in a background task after the response is sent.

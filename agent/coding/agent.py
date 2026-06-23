@@ -138,7 +138,7 @@ async def commit_changes(ctx: RunContext[Workspace], message: str) -> str:
 @agent.tool
 async def post_comment(ctx: RunContext[Workspace], body: str) -> str:
     ws = ctx.deps
-    url = await gh_post_comment(ws.event.repo_full_name, ws.event.issue_number, body)
+    url = await gh_post_comment(ws.event.repo_full_name, ws.event.issue_number, body, token=ws.token)
     return f"Comment posted: {url}"
 
 
@@ -149,6 +149,7 @@ async def run_agent(ws: Workspace) -> None:
             ws.event.repo_full_name,
             ws.event.issue_number,
             f"Agent started: {ws.event.task[:80]}",
+            token=ws.token,
         )
 
         reached_limit = False
@@ -166,21 +167,24 @@ async def run_agent(ws: Workspace) -> None:
                 ws.event.repo_full_name,
                 ws.event.issue_number,
                 "Agent reached iteration limit.",
+                token=ws.token,
             )
 
         if not reached_limit:
             if ws.commit_count > 0:
-                pr_url = await gh_push_and_open_pr(ws, summary)
+                pr_url = await gh_push_and_open_pr(ws, summary, token=ws.token)
                 await gh_post_comment(
                     ws.event.repo_full_name,
                     ws.event.issue_number,
                     f"Agent completed. PR: {pr_url}",
+                    token=ws.token,
                 )
             else:
                 await gh_post_comment(
                     ws.event.repo_full_name,
                     ws.event.issue_number,
                     "Agent completed but made no changes.",
+                    token=ws.token,
                 )
 
     except Exception as e:
@@ -190,6 +194,7 @@ async def run_agent(ws: Workspace) -> None:
                 ws.event.repo_full_name,
                 ws.event.issue_number,
                 f"Agent failed: {type(e).__name__}: {e}",
+                token=ws.token,
             )
         except Exception:
             log.exception("Failed to post error comment")

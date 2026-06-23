@@ -6,8 +6,6 @@ import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from config import GITHUB_TOKEN
-
 
 @dataclass
 class EventContext:
@@ -18,6 +16,7 @@ class EventContext:
     is_pr: bool
     title: str
     task: str
+    installation_id: int
 
 
 @dataclass
@@ -26,16 +25,20 @@ class Workspace:
     run_id: str = field(default_factory=lambda: uuid.uuid4().hex[:8])
     path: Path | None = None
     commit_count: int = 0
+    token: str = field(default="")
 
     @property
     def branch(self) -> str:
         return f"agent/{self.run_id}"
 
     async def init(self) -> None:
+        from github import get_installation_token
+        self.token = await get_installation_token(self.event.installation_id)
+
         tmpdir = tempfile.mkdtemp(prefix="agent-ws-")
         self.path = Path(tmpdir)
         auth_url = self.event.repo_url.replace(
-            "https://", f"https://x-access-token:{GITHUB_TOKEN}@"
+            "https://", f"https://x-access-token:{self.token}@"
         )
         proc = await asyncio.create_subprocess_exec(
             "git", "clone", "--depth=1", auth_url, ".",
