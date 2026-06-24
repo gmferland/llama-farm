@@ -1,0 +1,3 @@
+# Sensitive variables
+.env
+secrets

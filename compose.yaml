@@ -4,13 +4,14 @@ services:
     ports:
       - "8000:8000"
     environment:
-      GITHUB_TOKEN: ${GITHUB_TOKEN}
-      GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET}
-      GITHUB_REPO: ${GITHUB_REPO}
       LLM_BASE_URL: http://server:8080
       LLM_MODEL: unsloth/Qwen3.5-4B-GGUF
       AGENT_MAX_ITERATIONS: "20"
       AGENT_MAX_CONCURRENCY: "20"
+    secrets:
+      - GITHUB_APP_ID
+      - GITHUB_APP_PRIVATE_KEY
+      - GITHUB_WEBHOOK_SECRET
     depends_on:
       - server
 
@@ -39,6 +40,14 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
+
+secrets:
+  GITHUB_APP_ID:
+    file: /secrets/GITHUB_APP_ID
+  GITHUB_APP_PRIVATE_KEY:
+    file: /secrets/GITHUB_APP_PRIVATE_KEY
+  GITHUB_WEBHOOK_SECRET:
+    file: /secrets/GITHUB_WEBHOOK_SECRET
 
 volumes:
   model_cache:
