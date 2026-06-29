@@ -1,3 +1,6 @@
 # Sensitive variables
 .env
 secrets
+
+# Python virtual environments
+.venv/

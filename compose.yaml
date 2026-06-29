@@ -43,11 +43,11 @@ services:
 
 secrets:
   GITHUB_APP_ID:
-    file: /secrets/GITHUB_APP_ID
+    file: ./secrets/GITHUB_APP_ID
   GITHUB_APP_PRIVATE_KEY:
-    file: /secrets/GITHUB_APP_PRIVATE_KEY
+    file: ./secrets/GITHUB_APP_PRIVATE_KEY
   GITHUB_WEBHOOK_SECRET:
-    file: /secrets/GITHUB_WEBHOOK_SECRET
+    file: ./secrets/GITHUB_WEBHOOK_SECRET
 
 volumes:
   model_cache:
