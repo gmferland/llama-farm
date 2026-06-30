@@ -1,7 +1,6 @@
 ## 1. Create pyproject.toml
 
 - [x] 1.1 Create `agent/coding/pyproject.toml` with `[project]` table: `name`, `version`, `requires-python = ">=3.11"`, and all dependencies currently in `requirements.txt`
-- [x] 1.2 Add `[build-system]` table referencing `hatchling` as the build backend
 
 ## 2. Generate lock file
 

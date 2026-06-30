@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Project declared as PEP 621 package
-The agent coding service SHALL declare its metadata and runtime dependencies in `agent/coding/pyproject.toml` using the `[project]` table (PEP 621). The `requires-python` field SHALL be set. The `[build-system]` table SHALL reference `hatchling` or `setuptools` as the build backend.
+The agent coding service SHALL declare its metadata and runtime dependencies in `agent/coding/pyproject.toml` using the `[project]` table (PEP 621). The `requires-python` field SHALL be set. There SHALL be no `[build-system]` table.
 
 #### Scenario: pyproject.toml exists with required fields
 - **WHEN** a developer opens `agent/coding/pyproject.toml`

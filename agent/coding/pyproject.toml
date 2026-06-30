@@ -12,6 +12,10 @@ dependencies = [
     "cryptography",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[dependency-groups]
+dev = [
+    "ruff>=0.15.20",
+]
+
+[tool.uv]
+link-mode = "copy"
